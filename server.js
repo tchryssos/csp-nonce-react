@@ -25,10 +25,10 @@ const setCSP = (req, res, next) => {
 }
 
 // Middlewares
+app.use(setCSP);
 app.use(history())
 app.use(express.static(__dirname + '/www'));
 app.use(logRequests);
-app.use(setCSP);
 
 app.use(webpackDevMiddleware(compiler, {
   hot: true,
