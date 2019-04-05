@@ -7,6 +7,8 @@ const history = require('connect-history-api-fallback');
 const app = express();
 const compiler = webpack(webpackConfig);
 
+app.set('view engine', 'ejs')
+
 // Custom Middleware
 const logRequests = (req, res, next) => {
   const date = new Date
