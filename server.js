@@ -7,7 +7,7 @@ const history = require('connect-history-api-fallback');
 const app = express();
 const compiler = webpack(webpackConfig);
 
-app.set('view engine', 'ejs')
+app.set('view engine', 'ejs');
 
 // Custom Middleware
 const logRequests = (req, res, next) => {
@@ -21,8 +21,9 @@ const setCSP = (req, res, next) => {
   nonce = crypto.randomBytes(16).toString('base64');
   res.setHeader(
     'Content-Security-Policy',
-    `script-src 'nonce-${nonce}'`
+    `script-src 'nonce-${nonce}' 'strict-dynamic' https:`
   )
+  res.locals.nonce = nonce
   next()
 }
 

@@ -18,7 +18,7 @@ module.exports = {
 	},
 	plugins: [
 		new HtmlWebpackPlugin({
-			filename: path.join(__dirname, '/dist/index.ejs'),
+			filename: path.join(__dirname, 'www/index.ejs'),
 		}),
 	],
 	module: {
