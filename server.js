@@ -1,13 +1,9 @@
 const express = require('express');
-const webpackDevMiddleware = require('webpack-dev-middleware');
 const crypto = require('crypto');
-const webpack = require('webpack');
-const webpackConfig = require('./webpack.config.js');
-const history = require('connect-history-api-fallback');
+const fs = require('fs');
+const path = require('path');
 const app = express();
-const compiler = webpack(webpackConfig);
-
-app.set('view engine', 'ejs');
+let nonce;
 
 // Custom Middleware
 const logRequests = (req, res, next) => {
@@ -17,31 +13,29 @@ const logRequests = (req, res, next) => {
   next()
 }
 
-const setCSP = (req, res, next) => {
+// Middlewares
+app.use(logRequests);
+app.get('/*', (req, res, next) => {
+  // Set nonce
   nonce = crypto.randomBytes(16).toString('base64');
   res.setHeader(
     'Content-Security-Policy',
     `script-src 'nonce-${nonce}' 'strict-dynamic' https:`
   )
-  res.locals.nonce = nonce
-  next()
-}
 
-// Middlewares
-app.use(setCSP);
-app.use(history())
-app.use(express.static(__dirname + '/www'));
-app.use(logRequests);
-
-app.use(webpackDevMiddleware(compiler, {
-  hot: true,
-  filename: 'bundle.js',
-  publicPath: '/',
-  stats: {
-    colors: true,
-    warnings: false,
-  },
-}));
+  // Handle navigation
+  const reqPath = req.path === '/' ? 'index.html' : req.path
+  if (reqPath.includes('.html')) {
+    const reqFilePath = path.resolve(__dirname, 'www', reqPath)
+    const html = fs
+      .readFileSync(reqFilePath, 'utf8')
+      .replace('<script ', `<script nonce="${nonce}" `)
+    res.send(html)
+  } else {
+    app.use(express.static(__dirname + '/www'));
+    next()
+  }
+})
 
 const server = app.listen(3000, function() {
   const host = server.address().address;

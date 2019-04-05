@@ -1,6 +1,5 @@
 const path = require('path')
 const autoprefixer = require('autoprefixer')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
 	context: path.join(__dirname, 'src'),
@@ -16,11 +15,6 @@ module.exports = {
 		errorDetails: true,
 		reasons: true,
 	},
-	plugins: [
-		new HtmlWebpackPlugin({
-			filename: path.join(__dirname, 'www/index.ejs'),
-		}),
-	],
 	module: {
 		rules: [
 			{
