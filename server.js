@@ -3,7 +3,6 @@ const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 const app = express();
-let nonce;
 
 // Custom Middleware
 const logRequests = (req, res, next) => {
@@ -17,7 +16,7 @@ const logRequests = (req, res, next) => {
 app.use(logRequests);
 app.get('/*', (req, res, next) => {
   // Set nonce
-  nonce = crypto.randomBytes(16).toString('base64');
+  const nonce = crypto.randomBytes(16).toString('base64');
   res.setHeader(
     'Content-Security-Policy',
     `script-src 'nonce-${nonce}' 'strict-dynamic' https:`
